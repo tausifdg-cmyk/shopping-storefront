@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Set up Support passkey</title>
+<style>
+:root{font-family:Inter,Arial,sans-serif;color:#20221f;background:#faf9f6}*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px}.card{background:#fff;width:min(100%,440px);padding:30px;border:1px solid #e6e3dc;border-radius:18px;box-shadow:0 12px 40px #0000000a}h1{margin:0 0 8px;font-size:28px;letter-spacing:-1px}.muted{color:#70746e;font-size:14px;line-height:1.65}label{display:block;font-size:13px;font-weight:700;margin:18px 0 6px}input{width:100%;padding:12px;border:1px solid #d9d6ce;border-radius:9px;font:inherit}button{width:100%;border:0;border-radius:24px;background:#20221f;color:#fff;padding:13px 16px;font-weight:700;cursor:pointer;margin-top:16px}button:disabled{opacity:.5;cursor:wait}.status{margin-top:16px;font-size:13px;line-height:1.6;overflow-wrap:anywhere}.warning{background:#fff5e8;padding:12px;border-radius:9px;color:#704a16;font-size:12px;line-height:1.6}a{color:inherit}
+</style>
+</head>
+<body><main class="card">
+<h1>Set up your Support passkey</h1>
+<p class="muted">One-time setup for the two authorized support accounts. Sign in with the temporary password created by the administrator, then register a passkey on this device.</p>
+<div class="warning">Use this setup page only while enrolling your passkey. Do not share your password or passkey with anyone.</div>
+<form id="loginForm">
+<label for="email">Support account</label>
+<select id="email" required style="width:100%;padding:12px;border:1px solid #d9d6ce;border-radius:9px;font:inherit;background:white">
+<option value="support-1@shopping-support.invalid">Support-1</option>
+<option value="support-2@shopping-support.invalid">Support-2</option>
+</select>
+<label for="password">Temporary password</label>
+<input id="password" type="password" autocomplete="current-password" required>
+<button id="loginBtn" type="submit">Verify account</button>
+</form>
+<section id="enroll" hidden>
+<p id="who" class="muted"></p>
+<button id="passkeyBtn" type="button">Register passkey on this device</button>
+</section>
+<div id="status" class="status" role="status" aria-live="polite"></div>
+<p class="muted"><a href="support.html">Return to Support sign-in</a></p>
+</main>
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.105.0';
+const supabase = createClient('https://jfeesgaotauezidfivsc.supabase.co','sb_publishable_teziivSVBCTCnINvcX8_0g_PzZQGgzs',{auth:{experimental:{passkey:true},persistSession:true,autoRefreshToken:true}});
+const form=document.getElementById('loginForm'), statusEl=document.getElementById('status'), loginBtn=document.getElementById('loginBtn'), enroll=document.getElementById('enroll'), passkeyBtn=document.getElementById('passkeyBtn');
+let currentUser=null, username=null;
+function status(msg){statusEl.textContent=msg}
+async function verifyMember(user){
+ const {data,error}=await supabase.from('support_users').select('username').eq('user_id',user.id).maybeSingle();
+ if(error) throw error;
+ if(!data) throw new Error('This account is not authorized for Support chat.');
+ return data.username;
+}
+form.addEventListener('submit',async e=>{
+ e.preventDefault(); loginBtn.disabled=true; status('Verifying account…');
+ try{
+  const {data,error}=await supabase.auth.signInWithPassword({email:document.getElementById('email').value,password:document.getElementById('password').value});
+  if(error) throw error;
+  currentUser=data.user; username=await verifyMember(currentUser);
+  form.hidden=true; enroll.hidden=false;
+  document.getElementById('who').textContent='Verified: '+username+'. Register a passkey using your device PIN, biometrics, or security key.';
+  status('Account verified. Continue to register the passkey.');
+ }catch(err){await supabase.auth.signOut();status(err.message||'Could not verify account. Check the account and temporary password.');loginBtn.disabled=false}
+});
+passkeyBtn.addEventListener('click',async()=>{
+ passkeyBtn.disabled=true; status('Starting passkey registration…');
+ try{
+  const {data,error}=await supabase.auth.registerPasskey();
+  if(error) throw error;
+  // Replace the temporary password with a random password that is never displayed or stored.
+  // This leaves passkey as the practical sign-in method after setup.
+  const bytes=new Uint8Array(48); crypto.getRandomValues(bytes);
+  const randomPassword=Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');
+  const {error:passwordError}=await supabase.auth.updateUser({password:randomPassword});
+  if(passwordError) throw new Error('Passkey was registered, but the temporary password could not be retired. Contact the administrator before relying on passkey-only sign-in. Details: '+passwordError.message);
+  await supabase.auth.signOut();
+  form.hidden=false; enroll.hidden=true; document.getElementById('password').value='';
+  loginBtn.disabled=false;
+  status('Passkey registered successfully for '+username+'. The temporary password has been retired. You can now sign in from the Support page with your passkey.');
+ }catch(err){status(err.message||'Passkey setup failed. Try again in a supported browser on this device.');passkeyBtn.disabled=false}
+});
+</script>
+</body></html>
