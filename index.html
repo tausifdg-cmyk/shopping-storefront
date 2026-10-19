@@ -45,7 +45,7 @@ footer{padding:28px 24px;border-top:1px solid var(--line);text-align:center;colo
 </main>
 <footer>© <span id="year"></span> shopping. · Everyday style, made simple.</footer>
 <button class="chat-fab" id="chatOpen">Support ↗</button>
-<div class="modal" id="chatModal" role="dialog" aria-modal="true" aria-labelledby="chatTitle"><div class="dialog"><button class="close" id="chatClose" aria-label="Close">×</button><div class="eyebrow">Private space</div><h2 id="chatTitle">Support</h2><p>The chat interface needs its separate backend before two people can securely sign in on registered devices, exchange messages or share media. This storefront is published as a frontend demo only; no private messages are stored here.</p><p>For security, don't enter passwords or private information into this demo.</p><button class="cta" id="chatOk">Got it</button></div></div>
+<div class="modal" id="chatModal" role="dialog" aria-modal="true" aria-labelledby="chatTitle"><div class="dialog"><button class="close" id="chatClose" aria-label="Close">×</button><div class="eyebrow">Private space</div><h2 id="chatTitle">Support</h2><p>For security, don't enter passwords or private information into this demo.</p><button class="cta" id="chatOk">Got it</button></div></div>
 <script>
 document.getElementById('year').textContent=new Date().getFullYear();
 let bag=0;document.querySelectorAll('.add').forEach(b=>b.addEventListener('click',()=>{bag++;document.getElementById('cart').textContent='Bag ('+bag+')';b.textContent='✓';setTimeout(()=>b.textContent='+',900)}));
