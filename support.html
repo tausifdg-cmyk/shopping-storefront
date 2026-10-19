@@ -10,7 +10,7 @@
 <body><main class="app">
 <header class="head"><div><h1>Private Support Chat</h1><div id="identity" class="muted">Only Support-1 and Support-2 are authorized</div></div><button id="logout" class="btn secondary" hidden>Sign out</button></header>
 <section id="login" class="login"><h2>Welcome to Support</h2><p class="muted">Sign in securely using your registered passkey. Your messages are automatically deleted after five minutes.</p><button id="signIn" class="btn">Sign in with passkey</button><div id="loginStatus" class="status" role="status" aria-live="polite"></div><p class="muted">First-time setup? <a href="setup-passkey.html">Register your passkey</a></p></section>
-<section id="chat" hidden style="flex:1;min-height:0;display:flex;flex-direction:column"><div id="messages" class="messages" aria-live="polite"><div class="empty">Loading messages…</div></div><form id="compose" class="compose"><textarea id="message" rows="1" maxlength="4000" placeholder="Write a message…" aria-label="Message" required></textarea><button class="btn" id="send" type="submit">Send</button></form><div class="foot">Text-only chat · Messages expire after 5 minutes · Do not send passwords or highly sensitive information.</div></section>
+<section id="chat" hidden style="flex:1;min-height:0;display:flex;flex-direction:column"><div id="messages" class="messages" aria-live="polite"><div class="empty">Loading messages…</div></div><form id="compose" class="compose"><textarea id="message" rows="1" maxlength="4000" placeholder="Write a message…" aria-label="Message" required></textarea><button class="btn" id="send" type="submit">Send</button></form></section>
 </main>
 <script type="module">
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.105.0';
