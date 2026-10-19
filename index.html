@@ -25,7 +25,7 @@ h1{font-size:clamp(42px,6vw,76px);line-height:.99;letter-spacing:-4px;margin:16p
 .product-art small{position:absolute;top:12px;left:12px;background:#fff;padding:6px 9px;border-radius:20px;font-size:10px;font-weight:800}
 .product h3{font-size:14px;margin:11px 0 2px}.product p{color:var(--muted);font-size:12px;margin:0}.price-row{display:flex;justify-content:space-between;align-items:center;margin-top:10px}.price{font-weight:800}.add{border:1px solid #d4d0c7;background:transparent;border-radius:50%;width:32px;height:32px;font-size:20px;cursor:pointer}
 footer{padding:28px 24px;border-top:1px solid var(--line);text-align:center;color:var(--muted);font-size:12px}
-.chat-fab{position:fixed;right:22px;bottom:22px;background:var(--ink);color:white;border:0;border-radius:30px;padding:14px 19px;box-shadow:0 8px 30px #0002;cursor:pointer;font-weight:700}
+.chat-fab{display:inline-block;text-decoration:none;position:fixed;right:22px;bottom:22px;background:var(--ink);color:white;border:0;border-radius:30px;padding:14px 19px;box-shadow:0 8px 30px #0002;cursor:pointer;font-weight:700}
 .modal{position:fixed;inset:0;background:#141612a8;display:none;place-items:center;padding:20px;z-index:5}.modal.open{display:grid}.dialog{background:#fff;border-radius:18px;padding:28px;width:min(100%,430px);box-shadow:0 25px 80px #0003}.dialog h2{margin:0 0 8px;letter-spacing:-1px}.dialog p{color:var(--muted);font-size:13px;line-height:1.7}.dialog button{margin-top:12px}.close{float:right;border:0;background:#f0efeb;border-radius:50%;width:32px;height:32px;cursor:pointer}
 @media(max-width:760px){nav{display:none}.hero{grid-template-columns:1fr;padding-top:35px}.hero-art{min-height:260px}.products{grid-template-columns:repeat(2,1fr);gap:22px 12px}h1{letter-spacing:-2.5px}.section-head p{display:none}}
 </style>
@@ -44,12 +44,11 @@ footer{padding:28px 24px;border-top:1px solid var(--line);text-align:center;colo
 <section id="about" style="padding:0 0 65px;max-width:650px"><div class="eyebrow">A simpler wardrobe</div><h2 style="font-size:30px;letter-spacing:-1px">Less choosing. More wearing.</h2><p style="color:var(--muted);line-height:1.8">A demo storefront concept for everyday clothing. Product names, prices and cart actions are sample content and are not connected to checkout or inventory yet.</p></section>
 </main>
 <footer>© <span id="year"></span> shopping. · Everyday style, made simple.</footer>
-<button class="chat-fab" id="chatOpen">Support ↗</button>
-<div class="modal" id="chatModal" role="dialog" aria-modal="true" aria-labelledby="chatTitle"><div class="dialog"><button class="close" id="chatClose" aria-label="Close">×</button><div class="eyebrow">Private space</div><h2 id="chatTitle">Support</h2><p>For security, don't enter passwords or private information into this demo.</p><button class="cta" id="chatOk">Got it</button></div></div>
+<a class="chat-fab" id="chatOpen" href="support.html">Support ↗</a>
 <script>
 document.getElementById('year').textContent=new Date().getFullYear();
 let bag=0;document.querySelectorAll('.add').forEach(b=>b.addEventListener('click',()=>{bag++;document.getElementById('cart').textContent='Bag ('+bag+')';b.textContent='✓';setTimeout(()=>b.textContent='+',900)}));
 document.getElementById('cart').addEventListener('click',()=>alert('Your bag has '+bag+' sample item(s). Checkout is not connected in this demo.'));
-const modal=document.getElementById('chatModal');document.getElementById('chatOpen').onclick=()=>modal.classList.add('open');document.getElementById('chatClose').onclick=()=>modal.classList.remove('open');document.getElementById('chatOk').onclick=()=>modal.classList.remove('open');modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('open')});
+
 </script>
 </body></html>
