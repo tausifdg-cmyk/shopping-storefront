@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shopping — Everyday Style</title>
+<meta name="description" content="Discover everyday clothing and wardrobe essentials.">
+<style>
+:root{--ink:#20221f;--muted:#70746e;--paper:#faf9f6;--accent:#b84e35;--line:#e6e3dc}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 Inter,Arial,sans-serif}
+header{height:74px;padding:0 clamp(18px,5vw,70px);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);background:#fff}
+.logo{font-size:24px;font-weight:900;letter-spacing:-1.3px}.logo span{color:var(--accent)}
+nav{display:flex;gap:25px;color:#4e524b;font-size:13px}nav a{color:inherit;text-decoration:none}
+.header-actions{display:flex;align-items:center;gap:12px}.pill{border:1px solid var(--line);border-radius:30px;padding:9px 14px;background:white;cursor:pointer}
+main{max-width:1240px;margin:auto;padding:0 24px}.hero{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;padding:52px 0 45px}
+.eyebrow{text-transform:uppercase;letter-spacing:2px;font-size:11px;font-weight:800;color:var(--accent)}
+h1{font-size:clamp(42px,6vw,76px);line-height:.99;letter-spacing:-4px;margin:16px 0 20px;max-width:550px}
+.hero p{color:var(--muted);max-width:390px;line-height:1.8}.cta{display:inline-block;margin-top:16px;background:var(--ink);color:white;border:0;border-radius:30px;padding:14px 23px;text-decoration:none;font-weight:700;cursor:pointer}
+.hero-art{min-height:360px;border-radius:8px;overflow:hidden;position:relative;background:linear-gradient(145deg,#d6c3ae,#f0e8dc 55%,#b5b3a4);display:grid;place-items:center}
+.hero-art:before{content:"";position:absolute;width:45%;height:80%;top:10%;left:28%;background:#f8f4eb;border-radius:42% 42% 8% 8%;transform:rotate(-4deg);box-shadow:24px 18px 0 #8b5f4e}
+.hero-art:after{content:"NEW SEASON";position:absolute;right:18px;bottom:18px;background:#fff;padding:12px 16px;font-size:11px;letter-spacing:2px;font-weight:800}
+.section-head{display:flex;justify-content:space-between;align-items:end;margin:20px 0}.section-head h2{font-size:27px;letter-spacing:-1px;margin:0}.section-head p{color:var(--muted);font-size:13px;margin:0}
+.products{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding-bottom:70px}
+.product{min-width:0}.product-art{aspect-ratio:4/5;border-radius:6px;display:grid;place-items:center;position:relative;overflow:hidden}
+.product-art:before{content:"";width:53%;height:64%;border-radius:35% 35% 8% 8%;background:var(--garment);box-shadow:inset -14px 0 0 #0000000c;clip-path:polygon(22% 0,38% 0,43% 8%,57% 8%,62% 0,78% 0,100% 19%,84% 37%,72% 29%,77% 100%,23% 100%,28% 29%,16% 37%,0 19%)}
+.product-art small{position:absolute;top:12px;left:12px;background:#fff;padding:6px 9px;border-radius:20px;font-size:10px;font-weight:800}
+.product h3{font-size:14px;margin:11px 0 2px}.product p{color:var(--muted);font-size:12px;margin:0}.price-row{display:flex;justify-content:space-between;align-items:center;margin-top:10px}.price{font-weight:800}.add{border:1px solid #d4d0c7;background:transparent;border-radius:50%;width:32px;height:32px;font-size:20px;cursor:pointer}
+footer{padding:28px 24px;border-top:1px solid var(--line);text-align:center;color:var(--muted);font-size:12px}
+.chat-fab{position:fixed;right:22px;bottom:22px;background:var(--ink);color:white;border:0;border-radius:30px;padding:14px 19px;box-shadow:0 8px 30px #0002;cursor:pointer;font-weight:700}
+.modal{position:fixed;inset:0;background:#141612a8;display:none;place-items:center;padding:20px;z-index:5}.modal.open{display:grid}.dialog{background:#fff;border-radius:18px;padding:28px;width:min(100%,430px);box-shadow:0 25px 80px #0003}.dialog h2{margin:0 0 8px;letter-spacing:-1px}.dialog p{color:var(--muted);font-size:13px;line-height:1.7}.dialog button{margin-top:12px}.close{float:right;border:0;background:#f0efeb;border-radius:50%;width:32px;height:32px;cursor:pointer}
+@media(max-width:760px){nav{display:none}.hero{grid-template-columns:1fr;padding-top:35px}.hero-art{min-height:260px}.products{grid-template-columns:repeat(2,1fr);gap:22px 12px}h1{letter-spacing:-2.5px}.section-head p{display:none}}
+</style>
+</head>
+<body>
+<header><div class="logo">shopping<span>.</span></div><nav><a href="#new">New arrivals</a><a href="#essentials">Clothing</a><a href="#about">Our approach</a></nav><div class="header-actions"><button class="pill" id="cart">Bag (0)</button></div></header>
+<main>
+<section class="hero" id="new"><div><div class="eyebrow">The everyday collection</div><h1>Good style.<br>Less fuss.</h1><p>Thoughtful everyday pieces, easy layers and wardrobe essentials designed to make getting dressed feel simple.</p><a class="cta" href="#essentials">Explore the collection&nbsp; ↗</a></div><div class="hero-art" role="img" aria-label="Abstract neutral fashion editorial"></div></section>
+<section id="essentials"><div class="section-head"><div><div class="eyebrow">Made for repeat wear</div><h2>Everyday favourites</h2></div><p>Easy pieces for your regular rotation</p></div>
+<div class="products">
+<article class="product"><div class="product-art" style="--garment:#c4a58c;background:#eee2d4"><small>BESTSELLER</small></div><h3>Relaxed Cotton Tee</h3><p>Soft cotton · Sand</p><div class="price-row"><span class="price">$18.00</span><button class="add" data-name="Relaxed Cotton Tee" aria-label="Add Relaxed Cotton Tee">+</button></div></article>
+<article class="product"><div class="product-art" style="--garment:#34413b;background:#dce2d8"></div><h3>Everyday Overshirt</h3><p>Lightweight layer · Olive</p><div class="price-row"><span class="price">$42.00</span><button class="add" data-name="Everyday Overshirt" aria-label="Add Everyday Overshirt">+</button></div></article>
+<article class="product"><div class="product-art" style="--garment:#b9b9c2;background:#e8e6ee"><small>NEW</small></div><h3>Weekend Sweatshirt</h3><p>Brushed fleece · Stone</p><div class="price-row"><span class="price">$36.00</span><button class="add" data-name="Weekend Sweatshirt" aria-label="Add Weekend Sweatshirt">+</button></div></article>
+<article class="product"><div class="product-art" style="--garment:#a35e48;background:#f0dfd7"></div><h3>Classic Knit Top</h3><p>Easy knit · Terracotta</p><div class="price-row"><span class="price">$29.00</span><button class="add" data-name="Classic Knit Top" aria-label="Add Classic Knit Top">+</button></div></article>
+</div></section>
+<section id="about" style="padding:0 0 65px;max-width:650px"><div class="eyebrow">A simpler wardrobe</div><h2 style="font-size:30px;letter-spacing:-1px">Less choosing. More wearing.</h2><p style="color:var(--muted);line-height:1.8">A demo storefront concept for everyday clothing. Product names, prices and cart actions are sample content and are not connected to checkout or inventory yet.</p></section>
+</main>
+<footer>© <span id="year"></span> shopping. · Everyday style, made simple.</footer>
+<button class="chat-fab" id="chatOpen">Private chat ↗</button>
+<div class="modal" id="chatModal" role="dialog" aria-modal="true" aria-labelledby="chatTitle"><div class="dialog"><button class="close" id="chatClose" aria-label="Close">×</button><div class="eyebrow">Private space</div><h2 id="chatTitle">Private chat</h2><p>The chat interface needs its separate backend before two people can securely sign in on registered devices, exchange messages or share media. This storefront is published as a frontend demo only; no private messages are stored here.</p><p>For security, don't enter passwords or private information into this demo.</p><button class="cta" id="chatOk">Got it</button></div></div>
+<script>
+document.getElementById('year').textContent=new Date().getFullYear();
+let bag=0;document.querySelectorAll('.add').forEach(b=>b.addEventListener('click',()=>{bag++;document.getElementById('cart').textContent='Bag ('+bag+')';b.textContent='✓';setTimeout(()=>b.textContent='+',900)}));
+document.getElementById('cart').addEventListener('click',()=>alert('Your bag has '+bag+' sample item(s). Checkout is not connected in this demo.'));
+const modal=document.getElementById('chatModal');document.getElementById('chatOpen').onclick=()=>modal.classList.add('open');document.getElementById('chatClose').onclick=()=>modal.classList.remove('open');document.getElementById('chatOk').onclick=()=>modal.classList.remove('open');modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('open')});
+</script>
+</body></html>
