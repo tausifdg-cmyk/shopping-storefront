@@ -36,9 +36,7 @@ async function loadMessages(){
  if(!user)return;
  const {data,error}=await supabase.from('support_messages').select('id,sender_id,message,created_at,expires_at').gt('expires_at',new Date().toISOString()).order('created_at',{ascending:true}).limit(300);
  if(error){status(error.message);return}
- const active=new Set((data||[]).map(m=>String(m.id)));
- loadedIds=new Set([...loadedIds].filter(id=>active.has(id)));
- list.replaceChildren();if(!data||!data.length){const empty=document.createElement('div');empty.className='empty';empty.textContent='No messages yet. Start the conversation.';list.append(empty);return}
+ list.replaceChildren();loadedIds.clear();if(!data||!data.length){const empty=document.createElement('div');empty.className='empty';empty.textContent='No messages yet. Start the conversation.';list.append(empty);return}
  for(const m of data)renderMessage(m);list.scrollTop=list.scrollHeight;
 }
 function subscribe(){
