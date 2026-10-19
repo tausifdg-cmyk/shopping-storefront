@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Private Support Chat</title>
+<style>
+:root{font-family:Inter,Arial,sans-serif;color:#20221f;background:#faf9f6}*{box-sizing:border-box}body{margin:0;min-height:100vh;padding:20px;display:grid;place-items:center}.app{width:min(100%,760px);height:min(820px,calc(100vh - 40px));min-height:520px;background:white;border:1px solid #e6e3dc;border-radius:18px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 12px 40px #0000000a}.head{padding:20px 22px;border-bottom:1px solid #e6e3dc;display:flex;justify-content:space-between;align-items:center;gap:10px}.head h1{font-size:21px;margin:0;letter-spacing:-.5px}.muted{color:#70746e;font-size:13px;line-height:1.6}.btn{border:0;border-radius:22px;background:#20221f;color:white;padding:11px 16px;font-weight:700;cursor:pointer}.btn:disabled{opacity:.5;cursor:wait}.btn.secondary{background:#f0efeb;color:#20221f}.login{margin:auto;text-align:center;padding:28px;max-width:460px}.login h2{font-size:28px;letter-spacing:-1px;margin:0 0 8px}.status{font-size:13px;line-height:1.6;overflow-wrap:anywhere;margin-top:14px}.messages{flex:1;overflow:auto;padding:20px;display:flex;flex-direction:column;gap:12px;background:#fbfaf8}.message{max-width:82%;align-self:flex-start;background:#f0efeb;border-radius:14px 14px 14px 4px;padding:10px 13px;overflow-wrap:anywhere;white-space:pre-wrap}.message.mine{align-self:flex-end;background:#20221f;color:white;border-radius:14px 14px 4px 14px}.meta{font-size:10px;opacity:.7;margin-bottom:4px}.empty{margin:auto;color:#70746e;font-size:13px;text-align:center}.compose{display:flex;gap:10px;padding:14px;border-top:1px solid #e6e3dc}.compose textarea{resize:none;flex:1;min-width:0;max-height:120px;border:1px solid #d9d6ce;border-radius:12px;padding:12px;font:inherit}.compose button{align-self:flex-end}.foot{padding:8px 16px;color:#70746e;font-size:11px;border-top:1px solid #f0efeb}.back{color:inherit;text-decoration:none;font-size:12px}@media(max-width:520px){body{padding:0}.app{height:100vh;min-height:0;border-radius:0;border:0}.head{padding:16px}.messages{padding:14px}.compose{padding:10px}.message{max-width:90%}}
+</style>
+</head>
+<body><main class="app">
+<header class="head"><div><h1>Private Support Chat</h1><div id="identity" class="muted">Only Support-1 and Support-2 are authorized</div></div><button id="logout" class="btn secondary" hidden>Sign out</button></header>
+<section id="login" class="login"><h2>Welcome to Support</h2><p class="muted">Sign in securely using your registered passkey. Your messages are automatically deleted after five minutes.</p><button id="signIn" class="btn">Sign in with passkey</button><div id="loginStatus" class="status" role="status" aria-live="polite"></div><p class="muted">First-time setup? <a href="setup-passkey.html">Register your passkey</a></p></section>
+<section id="chat" hidden style="flex:1;min-height:0;display:flex;flex-direction:column"><div id="messages" class="messages" aria-live="polite"><div class="empty">Loading messages…</div></div><form id="compose" class="compose"><textarea id="message" rows="1" maxlength="4000" placeholder="Write a message…" aria-label="Message" required></textarea><button class="btn" id="send" type="submit">Send</button></form><div class="foot">Text-only chat · Messages expire after 5 minutes · Do not send passwords or highly sensitive information.</div></section>
+</main>
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.105.0';
+const supabase=createClient('https://jfeesgaotauezidfivsc.supabase.co','sb_publishable_teziivSVBCTCnINvcX8_0g_PzZQGgzs',{auth:{experimental:{passkey:true},persistSession:true,autoRefreshToken:true}});
+const login=document.getElementById('login'),chat=document.getElementById('chat'),statusEl=document.getElementById('loginStatus'),signIn=document.getElementById('signIn'),logout=document.getElementById('logout'),list=document.getElementById('messages'),form=document.getElementById('compose'),input=document.getElementById('message'),send=document.getElementById('send'),identity=document.getElementById('identity');
+let user=null,username=null,channel=null,poll=null,loadedIds=new Set();
+function status(s){statusEl.textContent=s}
+function showChat(){login.hidden=true;chat.hidden=false;logout.hidden=false;identity.textContent='Signed in as '+username}
+function showLogin(){login.hidden=false;chat.hidden=true;logout.hidden=true;identity.textContent='Only Support-1 and Support-2 are authorized'}
+async function authorize(u){
+ const {data,error}=await supabase.from('support_users').select('username').eq('user_id',u.id).maybeSingle();
+ if(error)throw error;if(!data)throw new Error('This account is not authorized for Support chat.');
+ user=u;username=data.username;showChat();await loadMessages();subscribe();poll=setInterval(loadMessages,10000);
+}
+function clearChat(){if(channel){supabase.removeChannel(channel);channel=null}if(poll){clearInterval(poll);poll=null}user=null;username=null;loadedIds.clear();list.replaceChildren();showLogin()}
+function renderMessage(m){
+ if(loadedIds.has(String(m.id)))return;loadedIds.add(String(m.id));
+ const wrap=document.createElement('article');wrap.className='message'+(m.sender_id===user.id?' mine':'');
+ const meta=document.createElement('div');meta.className='meta';meta.textContent=(m.sender_id===user.id?'You':(username==='Support-1'?'Support-2':'Support-1'))+' · '+new Date(m.created_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+ const body=document.createElement('div');body.textContent=m.message;wrap.append(meta,body);list.append(wrap);
+}
+async function loadMessages(){
+ if(!user)return;
+ const {data,error}=await supabase.from('support_messages').select('id,sender_id,message,created_at,expires_at').gt('expires_at',new Date().toISOString()).order('created_at',{ascending:true}).limit(300);
+ if(error){status(error.message);return}
+ const active=new Set((data||[]).map(m=>String(m.id)));
+ loadedIds=new Set([...loadedIds].filter(id=>active.has(id)));
+ list.replaceChildren();if(!data||!data.length){const empty=document.createElement('div');empty.className='empty';empty.textContent='No messages yet. Start the conversation.';list.append(empty);return}
+ for(const m of data)renderMessage(m);list.scrollTop=list.scrollHeight;
+}
+function subscribe(){
+ channel=supabase.channel('private-support-chat').on('postgres_changes',{event:'INSERT',schema:'public',table:'support_messages'},payload=>{
+  const m=payload.new;if(m&&m.expires_at&&new Date(m.expires_at)>new Date()){if(list.querySelector('.empty'))list.replaceChildren();renderMessage(m);list.scrollTop=list.scrollHeight}
+ }).subscribe();
+}
+signIn.addEventListener('click',async()=>{
+ signIn.disabled=true;status('Waiting for your passkey…');
+ try{const {data,error}=await supabase.auth.signInWithPasskey();if(error)throw error;await authorize(data.user);status('')}
+ catch(err){await supabase.auth.signOut();status(err.message||'Sign-in failed. Use a device with your registered passkey.')}
+ finally{signIn.disabled=false}
+});
+form.addEventListener('submit',async e=>{
+ e.preventDefault();const message=input.value.trim();if(!message||!user)return;
+ send.disabled=true;
+ try{const {error}=await supabase.from('support_messages').insert({message});if(error)throw error;input.value='';await loadMessages()}
+ catch(err){alert('Message could not be sent: '+(err.message||'Unknown error'))}
+ finally{send.disabled=false;input.focus()}
+});
+logout.addEventListener('click',async()=>{await supabase.auth.signOut();clearChat()});
+(async()=>{const {data}=await supabase.auth.getUser();if(data.user){try{await authorize(data.user)}catch(err){await supabase.auth.signOut();clearChat();status(err.message)}}else showLogin()})();
+</script>
+</body></html>
