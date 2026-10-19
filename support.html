@@ -60,7 +60,20 @@ form.addEventListener('submit',async e=>{
  catch(err){alert('Message could not be sent: '+(err.message||'Unknown error'))}
  finally{send.disabled=false;input.focus()}
 });
-logout.addEventListener('click',async()=>{await supabase.auth.signOut();clearChat()});
+logout.addEventListener('click',async()=>{await supabase.auth.signOut();clearChat();enterPasswordGate()});
+// Lock the chat when the page becomes hidden (commonly when the phone is locked or the user switches apps).
+let autoLocking=false;
+async function autoLockSupport(){
+ if(autoLocking||!user)return;
+ autoLocking=true;
+ try{await supabase.auth.signOut()}catch(e){}
+ clearChat();
+ enterPasswordGate();
+ gateStatus.textContent='Support locked for your privacy. Enter the password to continue.';
+ autoLocking=false;
+}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')void autoLockSupport()});
+window.addEventListener('pagehide',()=>{if(user)void autoLockSupport()});
 enterPasswordGate();
 </script>
 </body></html>
